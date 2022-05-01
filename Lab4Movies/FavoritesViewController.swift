@@ -10,6 +10,7 @@ import UIKit
 
 let savedFavorites = UserDefaults.standard
 var favorites: [Movie]!
+var favoritesImageCache: [UIImage]!
 class FavoritesViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var favoritesTableView: UITableView!
     @IBOutlet weak var shareButton: UIBarButtonItem!
@@ -27,7 +28,6 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
         } //https://stackoverflow.com/questions/25921623/how-to-reload-tableview-from-another-view-controller-in-swift
         NotificationCenter.default.addObserver(self, selector: #selector(loadList), name: NSNotification.Name(rawValue: "load"), object: nil)
         favoritesTableView.dataSource = self
-        //https://stackoverflow.com/questions/25632394/swift-uitableview-set-rowheight
         favoritesTableView.rowHeight = 90
         favoritesTableView.reloadData()
     }
@@ -56,6 +56,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
         
         if (!favorites.isEmpty){
             cell.setup(index: indexPath.row)
+            cell.imageView?.image = favoritesImageCache[indexPath.row]
 //            cell.title.text = favorites[indexPath.item].title
 //
 //            if let posterPathUrl = favorites[indexPath.item].poster_path {
@@ -81,38 +82,12 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
             guard let movieVC = segue.destination as? SelectedMovieViewController
                 else { preconditionFailure("Expected a SelectedMovieVIewController") }
             
-            let movieCell = favorites[indexPath.row]
-            if let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieCell.id ?? 0 )/videos?api_key=487eecc5c6b322b023ba0b08d7c89fa9&language=en-US") {
-                DispatchQueue.global().async {
-                    let data = try! Data(contentsOf: url)
-                    let json = try! JSONDecoder().decode(VideoResults.self, from: data)
-                    var movieArray = json.results
-                    if(movieArray.count == 1) {
-                        if(movieArray[0].site == "YouTube") {
-                            movieVC.trailerURL = URL(string: "https://www.youtube.com/watch?v=\(movieArray[0].key ?? "")")
-                        }
-                    } else if(movieArray.count > 1) {
-                        var key = ""
-                        var firstFound = ""
-                        for trailer in movieArray {
-                            if(trailer.site == "YouTube" && trailer.type == "Trailer" && firstFound == "") {
-                                firstFound = trailer.key!
-                            }
-                            if(trailer.site == "YouTube" && trailer.type == "Trailer" && trailer.name?.range(of: "Teaser") == nil) {
-                                key = trailer.key!
-                                break
-                            }
-                        }
-                        if(key == "") {
-                            key = firstFound
-                        }
-                        //DispatchQueue.main.async {
-                        movieVC.trailerURL = URL(string: "https://www.youtube.com/watch?v=\(key)")
-                        //}
-                    }
-                }
-                movieVC.movie = favorites[indexPath.row]
-            }
+            //let movieCell = favorites[indexPath.row]
+            //movieVC.trailerURL = movieVC.movie.trailer
+            movieVC.movie = favorites[indexPath.row]
+            //print(favorites[indexPath.row].trailer)
+            movieVC.trailerURL = favorites[indexPath.row].trailer
+           // print(movieVC.movie.trailer)
         }
     }
     //https://stackoverflow.com/questions/24103069/add-swipe-to-delete-uitableviewcell
@@ -123,6 +98,7 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
             favorites.remove(at: indexPath.item)
+            favoritesImageCache.remove(at: indexPath.item)
             favoritesTableView.reloadData()
             if(favorites.count > 0) {
                 clearButton.isEnabled = true
@@ -135,10 +111,16 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
             do {
                 let data = try NSKeyedArchiver.archivedData(withRootObject: favorites!, requiringSecureCoding: false)
                 savedFavorites.set(data, forKey: "favorites")
+                let data2 = try NSKeyedArchiver.archivedData(withRootObject: favoritesImageCache!, requiringSecureCoding: false)
+                savedFavorites.set(data2, forKey: "favoritesImageCache")
             } catch {}
         }
     }
     @objc func loadList() {
+        if(favorites.count == 0) {
+            clearButton.isEnabled = false
+            shareButton.isEnabled = false
+        }
         self.favoritesTableView.reloadData()
     }
 
@@ -158,12 +140,15 @@ class FavoritesViewController: UIViewController, UITableViewDataSource {
     }
     @IBAction func clearFavoriteList(_ sender: Any) {
         favorites = []
+        favoritesImageCache = []
         favoritesTableView.reloadData()
         clearButton.isEnabled = false
         shareButton.isEnabled = false
         do {
             let data = try NSKeyedArchiver.archivedData(withRootObject: favorites!, requiringSecureCoding: false)
             savedFavorites.set(data, forKey: "favorites")
+            let data2 = try NSKeyedArchiver.archivedData(withRootObject: favoritesImageCache!, requiringSecureCoding: false)
+            savedFavorites.set(data2, forKey: "favoritesImageCache")
         } catch {}
     }
 }

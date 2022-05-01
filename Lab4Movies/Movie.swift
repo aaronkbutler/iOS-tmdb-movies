@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Foundation
 //http://ios-tutorial.com/how-to-save-array-of-custom-objects-to-nsuserdefaults/
 //https://stackoverflow.com/questions/48069125/swift-4-decoding-orders-codingkeys-does-not-conform-to-expected-type-c
 class Movie: NSObject, Decodable, NSCoding {
@@ -18,6 +19,7 @@ class Movie: NSObject, Decodable, NSCoding {
     let vote_average: Double
     let overview: String
     let vote_count:Int!
+    var trailer: URL?
     
 //    enum CodingKeys: String, CodingKey {
 //        case id
@@ -62,7 +64,7 @@ class Movie: NSObject, Decodable, NSCoding {
 //        }
 //        return false
 //    }
-    init(id: Int!, poster_path: String?, title: String, release_date: String?, vote_average: Double, overview: String, vote_count: Int?) {
+    init(id: Int!, poster_path: String?, title: String, release_date: String?, vote_average: Double, overview: String, vote_count: Int?, trailer: URL?) {
         self.id = id
         self.poster_path = poster_path
         self.title = title
@@ -70,6 +72,7 @@ class Movie: NSObject, Decodable, NSCoding {
         self.vote_average = vote_average
         self.overview = overview
         self.vote_count = vote_count
+        self.trailer = trailer
     }
     required convenience init?(coder aDecoder: NSCoder) {
         let id = aDecoder.decodeObject(forKey: "id") as! Int
@@ -79,7 +82,13 @@ class Movie: NSObject, Decodable, NSCoding {
         let vote_average = aDecoder.decodeDouble(forKey: "vote_average")
         let overview = aDecoder.decodeObject(forKey: "overview") as? String
         let vote_count = aDecoder.decodeObject(forKey: "vote_count") as! Int
-        self.init(id: id, poster_path: poster_path, title: title!, release_date: release_date, vote_average: vote_average, overview: overview!, vote_count: vote_count)
+        let trailer: URL?
+        if(aDecoder.decodeObject(forKey: "trailer") != nil) {
+            trailer = aDecoder.decodeObject(forKey: "trailer") as? URL
+        } else {
+            trailer = URL(string: "")
+        }
+        self.init(id: id, poster_path: poster_path, title: title!, release_date: release_date, vote_average: vote_average, overview: overview!, vote_count: vote_count, trailer: trailer)
     }
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.id, forKey: "id")
@@ -89,6 +98,7 @@ class Movie: NSObject, Decodable, NSCoding {
         aCoder.encode(self.vote_average, forKey: "vote_average")
         aCoder.encode(self.overview, forKey: "overview")
         aCoder.encode(self.vote_count, forKey: "vote_count")
+        aCoder.encode(self.trailer, forKey: "trailer")
     }
     
 }

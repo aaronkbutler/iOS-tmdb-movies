@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14490.70" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14490.21"/>
+    </dependencies>
+    <scenes>
+        <!--Now Playing-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller title="Now Playing" id="AgC-eL-Hgc" customClass="TableInterfaceController" customModule="MovieSearchWatchApp_Extension">
+                    <items>
+                        <table alignment="left" id="gnb-8N-bfS">
+                            <items>
+                                <tableRow identifier="WatchCell" id="0Hv-h4-q4L" customClass="RowController" customModule="MovieSearchWatchApp" customModuleProvider="target">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" id="jmu-uG-KOp">
+                                        <items>
+                                            <imageView width="39" height="61" alignment="left" verticalAlignment="center" id="YVc-TG-VPc"/>
+                                            <label alignment="left" verticalAlignment="center" text="Label" numberOfLines="3" id="0mv-hw-Suv"/>
+                                        </items>
+                                    </group>
+                                    <connections>
+                                        <outlet property="image" destination="YVc-TG-VPc" id="gss-mw-cFr"/>
+                                        <outlet property="labelTitle" destination="0mv-hw-Suv" id="sDa-Dy-IqT"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <connections>
+                        <outlet property="favoritesTable" destination="gnb-8N-bfS" id="7dh-3G-Yf2"/>
+                    </connections>
+                </controller>
+            </objects>
+        </scene>
+        <!--Movie-->
+        <scene sceneID="MZc-j6-NXw">
+            <objects>
+                <controller identifier="Movie" id="aQz-rg-A6w" customClass="DetailInterfaceController" customModule="MovieSearchWatchApp" customModuleProvider="target">
+                    <items>
+                        <label alignment="left" text="Label" numberOfLines="3" id="zXW-ii-fI1"/>
+                        <group width="1" alignment="left" spacing="4" id="2RU-dG-CBS">
+                            <items>
+                                <imageView width="64" height="97" alignment="left" id="6oZ-qY-KXm"/>
+                                <label alignment="left" textAlignment="left" numberOfLines="30" id="kQX-9k-pez">
+                                    <fontDescription key="font" type="system" pointSize="12"/>
+                                </label>
+                            </items>
+                            <color key="backgroundColor" red="0.20533787728786523" green="0.4835888984587734" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <edgeInsets key="margins" left="4" right="4" top="4" bottom="4"/>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="descriptionLabel" destination="kQX-9k-pez" id="oB0-0c-Dz2"/>
+                        <outlet property="imagePoster" destination="6oZ-qY-KXm" id="eRU-L9-8Mz"/>
+                        <outlet property="titleLabel" destination="zXW-ii-fI1" id="KXN-ug-w4V"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="295" y="4"/>
+        </scene>
+    </scenes>
+</document>

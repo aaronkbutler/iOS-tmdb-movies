@@ -22,16 +22,16 @@ class PopularMovieCellCollectionViewCell: UICollectionViewCell {
     
     func setup(index: Int) {
         title.text = popularCells[index].title
-        if let posterPathURL = popularCells[index].poster_path {
-            DispatchQueue.global().async { [weak self] in
-                if let data = try? Data(contentsOf: URL(string: "https://image.tmdb.org/t/p/w370_and_h556_bestv2/" + posterPathURL)!) {
-                    if let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self!.poster.image = image
-                        }
-                    }
-                }
-            }
-        }
+//        if let posterPathURL = popularCells[index].poster_path {
+//            DispatchQueue.global().async { [weak self] in
+//                if let data = try? Data(contentsOf: URL(string: "https://image.tmdb.org/t/p/w370_and_h556_bestv2/" + posterPathURL)!) {
+//                    if let image = UIImage(data: data) {
+//                        DispatchQueue.main.async {
+//                            self!.poster.image = image
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
